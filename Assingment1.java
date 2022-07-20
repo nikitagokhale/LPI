@@ -6,12 +6,6 @@ public class Assignment1
 	public class Table_Node
 	{
 		int service_time, wait_time;
-		
-		Table_Node()
-		{
-			service_time = 0;
-			wait_time = 0;
-		}
 	}
 
 	public static void main(String [] args)
@@ -25,7 +19,9 @@ public class Assignment1
 		System.out.println("Enter the service times:-");
 		for(int i=0;i<no_processes;i++)
 		{
-			table.service_time
+			System.out.print(">");
+			table[i+1].service_time = sc.nextInt();
+			System.out.println();			
 		}
 	}
 }
