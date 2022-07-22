@@ -1,15 +1,16 @@
 import java.util.*;
 
+class Table_Node
+{
+	int service_time, wait_time;
+}
 
 public class Assignment1
 {
-	public class Table_Node
-	{
-		int service_time, wait_time;
-	}
-
 	public static void main(String [] args)
 	{
+		int sum = 0;
+		Table_Node temp = new Table_Node();
 		Table_Node[] table;
 		Scanner sc = new Scanner(System.in);
 		System.out.print("Enter no of processes:- ");
@@ -20,8 +21,13 @@ public class Assignment1
 		for(int i=0;i<no_processes;i++)
 		{
 			System.out.print(">");
-			table[i+1].service_time = sc.nextInt();
-			System.out.println();			
+			temp.service_time = sc.nextInt();
+			table[i] = temp;
+		}
+		for(int i=0;i<no_processes;i++)
+		{
+			table
+			sum = table[i].service_time
 		}
 	}
 }
