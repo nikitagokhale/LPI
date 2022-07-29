@@ -1,16 +1,11 @@
 import java.util.*;
 
-class Table_Node
-{
-	int arrival_time, exe_time, service_time, wait_time;
-}
-
 public class Assignment1
 {
+	int arrival_time, exe_time, service_time, wait_time, ;
+	
 	void FCFS()
 	{
-		Table_Node obj_FCFS = new Table_Node();
-		
 	}
 	
 	public static void main(String [] args)
