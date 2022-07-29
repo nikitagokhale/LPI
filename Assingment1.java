@@ -2,15 +2,17 @@ import java.util.*;
 
 public class Assignment1
 {
-	int arrival_time, exe_time, service_time, wait_time, ;
+	int arrival_time, exe_time, service_time, wait_time;
 	
 	void FCFS()
 	{
+		
 	}
 	
 	public static void main(String [] args)
 	{
-		Assignment1 obj_main = new Assignment1();
+		Assignment1 obj_assign = new Assignment1();
+		
 		Scanner sc = new Scanner(System.in);
 		int choice=0;
 		while(choice!=5)
@@ -20,7 +22,7 @@ public class Assignment1
 			switch(choice)
 			{
 			case 1:
-				obj_main.FCFS();
+				obj_assign.FCFS();
 				break;
 				
 			case 5:
