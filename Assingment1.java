@@ -2,32 +2,40 @@ import java.util.*;
 
 class Table_Node
 {
-	int service_time, wait_time;
+	int arrival_time, exe_time, service_time, wait_time;
 }
 
 public class Assignment1
 {
+	void FCFS()
+	{
+		Table_Node obj_FCFS = new Table_Node();
+		
+	}
+	
 	public static void main(String [] args)
 	{
-		int sum = 0;
-		Table_Node temp = new Table_Node();
-		Table_Node[] table;
+		Assignment1 obj_main = new Assignment1();
 		Scanner sc = new Scanner(System.in);
-		System.out.print("Enter no of processes:- ");
-		int no_processes = sc.nextInt();
-		System.out.println();
-		table = new Table_Node[no_processes];
-		System.out.println("Enter the service times:-");
-		for(int i=0;i<no_processes;i++)
+		int choice=0;
+		while(choice!=5)
 		{
-			System.out.print(">");
-			temp.service_time = sc.nextInt();
-			table[i] = temp;
-		}
-		for(int i=0;i<no_processes;i++)
-		{
-			table
-			sum = table[i].service_time
+			System.out.print("MAIN MENU\n1. FCFS.\n2. SJF (Preemptive).\n3. Priority (Non-Preemptive).\n4. Round Robin (Preemptive).\n5.EXIT.\nEnter your choice:- ");
+			choice = sc.nextInt();
+			switch(choice)
+			{
+			case 1:
+				obj_main.FCFS();
+				break;
+				
+			case 5:
+				System.out.println("Thank you!");
+				break;
+				
+			default:
+				System.out.println("Please enter a valid choice!");
+				break;
+			}
 		}
 	}
 }
