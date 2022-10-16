@@ -1,0 +1,2 @@
+1. M1 10 20 &B=CREG ; 
+2. M2 100 200 &V=AREG &U=BREG ; 
