@@ -1,13 +1,13 @@
 import java.util.*;
 import java.io.*;
 
-class NodeMNTPass2
+class NodeMNT
 {
 	String macroName;
 	int pp=0, kp=0, p_kpdtab, p_MDT;
 }
 
-class NodeKPDTABPass2
+class NodeKPDTAB
 {
 	String par1, par2;
 }
@@ -15,21 +15,21 @@ class NodeKPDTABPass2
 class MacroDataStructsPass2
 {
 	ArrayList<String> MDT = new ArrayList<String>();
-	ArrayList<NodeMNTPass2> MNT = new ArrayList<NodeMNTPass2>();
-	ArrayList<NodeKPDTABPass2> KPDTAB = new ArrayList<NodeKPDTABPass2>();
-	ArrayList<String> MDTPass2 = new ArrayList<String>();
+	ArrayList<NodeMNT> MNT = new ArrayList<NodeMNT>();
+	ArrayList<NodeKPDTAB> KPDTAB = new ArrayList<NodeKPDTAB>();
+	ArrayList<String> Pass2OutputTokens = new ArrayList<String>();
 	
 	void processStart(ArrayList<String> callArgs, String macroName) throws IOException
 	{
-		NodeMNTPass2 tempMNT = macroIndex(macroName);
+		NodeMNT tempMNT = macroIndex(macroName);
 		String[] aptab = new String[tempMNT.kp+tempMNT.pp];
 		for(int i=0;i<tempMNT.pp;i++)
 		{
 			aptab[i] = callArgs.get(0);
 			callArgs.remove(0);
-		}	
-		int p_kpdtab = tempMNT.p_kpdtab - 1;
-		int p_MDT = tempMNT.p_MDT - 1;
+		}
+		
+		int p_kpdtab = tempMNT.p_kpdtab;
 		int j = tempMNT.pp;
 		for(int i=0;i<tempMNT.kp;i++)
 		{
@@ -37,53 +37,95 @@ class MacroDataStructsPass2
 			j++;
 			p_kpdtab++;
 		}
-		p_kpdtab = tempMNT.p_kpdtab - 1;
+		
 		for(int i=0;i<callArgs.size();i++)
 		{
 			String[] args = callArgs.get(i).split("=");
-			int index = tempMNT.pp + searchKPDTAB(args[0]) - p_kpdtab + 1;
+			int index = tempMNT.pp + searchKPDTAB(args[0]) - tempMNT.p_kpdtab + 1;
 			aptab[index-1] = args[1];
 		}
-		MDTPass2.add(macroName);
-		MDTPass2.add(";");
-		for(int i=p_MDT;i<MDT.size();i++)
+		
+		Pass2OutputTokens.add(macroName);
+		Pass2OutputTokens.add(";");
+		for(int i=tempMNT.p_MDT;i<MDT.size();i++)
 		{
 			String[] words = MDT.get(i).split(" ");
 			if(words[words.length-1].equalsIgnoreCase("mend"))
 				break;
-			for(int k=1;k<words.length;k++)
+			for(j=1;j<words.length;j++)
 			{
-				if(words[k].contains("(P,"))
+				if(words[j].contains("(P,"))
 				{
-					int indexAPTAB = Integer.parseInt(String.valueOf(words[k].charAt(3)));
-					MDTPass2.add(aptab[indexAPTAB-1]);
+					int indexAPTAB = Integer.parseInt(String.valueOf(words[j].charAt(3)));
+					Pass2OutputTokens.add(aptab[indexAPTAB-1]);
 				}
 				else
-
-					MDTPass2.add(words[k]);
+					Pass2OutputTokens.add(words[j]);
 			}
-			MDTPass2.add(";");
+			Pass2OutputTokens.add(";");
 		}
 	}
 	
-	int searchKPDTAB(String par1)
+	void readPass1Output() throws FileNotFoundException
 	{
-		for(int i=0;i<KPDTAB.size();i++)
+		File readMNT = new File("C:\\Users\\manjo\\eclipse-workspace\\MacroPass1/MNT.txt");
+		Scanner scMNT = new Scanner(readMNT);
+		while(scMNT.hasNextLine())
 		{
-			if(KPDTAB.get(i).par1.equalsIgnoreCase(par1))
-				return i;
+			NodeMNT tempMNT = new NodeMNT();
+			String[] line = scMNT.nextLine().split("\t");
+			tempMNT.macroName = line[1];
+			tempMNT.pp = Integer.parseInt(line[2]);
+			tempMNT.kp = Integer.parseInt(line[3]);
+			tempMNT.p_MDT = Integer.parseInt(line[4])-1;
+			tempMNT.p_kpdtab = Integer.parseInt(line[5])-1;
+			MNT.add(tempMNT);
 		}
-		return -1;
+		scMNT.close();
+		
+		if(KPDTABFile())
+		{
+			File readKPDTAB = new File("C:\\Users\\manjo\\eclipse-workspace\\MacroPass1/KPDTAB.txt");
+			Scanner scKPDTAB = new Scanner(readKPDTAB);
+			while(scKPDTAB.hasNextLine())
+			{
+				NodeKPDTAB tempKPDTAB = new NodeKPDTAB();
+				String[] line = scKPDTAB.nextLine().split("\t");
+				tempKPDTAB.par1 = line[1];
+				tempKPDTAB.par2 = line[2];
+				KPDTAB.add(tempKPDTAB);
+			}
+			scKPDTAB.close();
+		}
+		
+		File readMDT = new File("C:\\Users\\manjo\\eclipse-workspace\\MacroPass1/MDT.txt");
+		Scanner scMDT = new Scanner(readMDT);
+		while(scMDT.hasNextLine())
+		{
+			MDT.add(scMDT.nextLine());
+		}
+		scMDT.close();
 	}
-	
-	NodeMNTPass2 macroIndex(String token)
+
+	void printMDTPass2() throws IOException
 	{
-		for(int i=0;i<MNT.size();i++)
+		for(int k=0;k<Pass2OutputTokens.size();k++)
 		{
-			if(MNT.get(i).macroName.equalsIgnoreCase(token))
-				return MNT.get(i);
+			System.out.println(Pass2OutputTokens.get(k));
 		}
-		return null;
+		FileWriter writeMDTPass2 = new FileWriter("Pass2Output.txt");
+		for(int k=0;k<Pass2OutputTokens.size();k++)
+		{
+			writeMDTPass2.write("+ ");
+			while(!Pass2OutputTokens.get(k).equalsIgnoreCase(";"))
+			{
+				String line1 = Pass2OutputTokens.get(k) + " ";
+				writeMDTPass2.write(line1);
+				k++;
+			}
+			writeMDTPass2.write("\n");
+		}
+		writeMDTPass2.close();
 	}
 	
 	boolean containsMacro(String token)
@@ -96,6 +138,26 @@ class MacroDataStructsPass2
 		return false;
 	}
 	
+	int searchKPDTAB(String par1)
+	{
+		for(int i=0;i<KPDTAB.size();i++)
+		{
+			if(KPDTAB.get(i).par1.equalsIgnoreCase(par1))
+				return i;
+		}
+		return -1;
+	}
+	
+	NodeMNT macroIndex(String token)
+	{
+		for(int i=0;i<MNT.size();i++)
+		{
+			if(MNT.get(i).macroName.equalsIgnoreCase(token))
+				return MNT.get(i);
+		}
+		return null;
+	}
+	
 	boolean KPDTABFile()
 	{
 		for(int i=0;i<MNT.size();i++)
@@ -105,77 +167,15 @@ class MacroDataStructsPass2
 		}
 		return false;
 	}
-	
-	void readPass1Output() throws FileNotFoundException
-	{
-		File readMNT = new File("C:\\Users\\manjo\\eclipse-workspace\\MacroAssignment/MNT.txt");
-		Scanner scMNT = new Scanner(readMNT);
-		while(scMNT.hasNextLine())
-		{
-			NodeMNTPass2 tempMNT = new NodeMNTPass2();
-			String[] line = scMNT.nextLine().split("\t");
-			tempMNT.macroName = line[1];
-			tempMNT.pp = Integer.parseInt(line[2]);
-			tempMNT.kp = Integer.parseInt(line[3]);
-			tempMNT.p_MDT = Integer.parseInt(line[4]);
-			tempMNT.p_kpdtab = Integer.parseInt(line[5]);
-			MNT.add(tempMNT);
-		}
-		scMNT.close();
-		
-		if(KPDTABFile())
-		{
-			File readKPDTAB = new File("C:\\Users\\manjo\\eclipse-workspace\\MacroAssignment/KPDTAB.txt");
-			Scanner scKPDTAB = new Scanner(readKPDTAB);
-			while(scKPDTAB.hasNextLine())
-			{
-				NodeKPDTABPass2 tempKPDTAB = new NodeKPDTABPass2();
-				String[] line = scKPDTAB.nextLine().split("\t");
-				tempKPDTAB.par1 = line[1];
-				tempKPDTAB.par2 = line[2];
-				KPDTAB.add(tempKPDTAB);
-			}
-			scKPDTAB.close();
-		}
-		
-		File readMDT = new File("C:\\Users\\manjo\\eclipse-workspace\\MacroAssignment/MDT.txt");
-		Scanner scMDT = new Scanner(readMDT);
-		while(scMDT.hasNextLine())
-		{
-			MDT.add(scMDT.nextLine());
-		}
-		scMDT.close();
-	}
-
-	void printMDTPass2() throws IOException
-	{
-		for(int k=0;k<MDTPass2.size();k++)
-		{
-			System.out.println(MDTPass2.get(k));
-		}
-		FileWriter writeMDTPass2 = new FileWriter("Pass2Output.txt");
-		for(int k=0;k<MDTPass2.size();k++)
-		{
-			writeMDTPass2.write("+ ");
-			while(!MDTPass2.get(k).equalsIgnoreCase(";"))
-			{
-				String line1 = MDTPass2.get(k) + " ";
-				writeMDTPass2.write(line1);
-				k++;
-			}
-			writeMDTPass2.write("\n");
-		}
-		writeMDTPass2.close();
-	}
 }
 
-public class Assignment4
+public class Assignment2Pass2
 {
 	public static void main(String[] args) throws IOException
 	{
 		MacroDataStructsPass2 obj = new MacroDataStructsPass2();
 		obj.readPass1Output();
-		File readCalls = new File("C:\\\\Users\\\\manjo\\\\eclipse-workspace\\\\MacroAssignment/Calls.txt");
+		File readCalls = new File("C:\\\\Users\\\\manjo\\\\eclipse-workspace\\\\MacroPass1/Calls.txt");
 		Scanner scCalls = new Scanner(readCalls);
 		while(scCalls.hasNextLine())
 		{
@@ -190,7 +190,7 @@ public class Assignment4
 			else
 				System.out.println("Macro " + line[1] + "not found!");
 		}
-		obj.printMDTPass2();
 		scCalls.close();
+		obj.printMDTPass2();
 	}
 }
