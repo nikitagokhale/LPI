@@ -12,7 +12,7 @@ class NodeMNT
 	int pp=0, kp=0, p_kpdtab, p_MDT;
 }
 
-class MacroDataStructs
+class MacroDataStructsPass1
 {
 	ArrayList<NodeKPDTAB> KPDTAB = new ArrayList<NodeKPDTAB>();
 	ArrayList<String> MDT = new ArrayList<String>();
@@ -101,7 +101,7 @@ class MacroDataStructs
 		{
 			NodeMNT tempMNT = new NodeMNT();
 			tempMNT = MNT.get(i);
-			String line = Integer.toString(i+1) + ".\t" + tempMNT.macroName + "\t" + Integer.toString(tempMNT.pp) + "\t" + Integer.toString(tempMNT.kp) + "\t" + Integer.toString(tempMNT.p_kpdtab) + "\t" + Integer.toString(tempMNT.p_MDT) + "\n";
+			String line = Integer.toString(i+1) + ".\t" + tempMNT.macroName + "\t" + Integer.toString(tempMNT.pp) + "\t" + Integer.toString(tempMNT.kp) + "\t" + Integer.toString(tempMNT.p_MDT + 1) + "\t" + Integer.toString(tempMNT.p_kpdtab + 1) + "\n";
 			writeMNT.write(line);
 		}
 		writeMNT.close();
@@ -136,14 +136,16 @@ public class Assignment3
 		System.out.println();
 	}
 	
-	public static void main(String[] args) throws FileNotFoundException
+	public static void main(String[] args) throws IOException
 	{
 		File myFile = new File("C:\\Users\\manjo\\eclipse-workspace/Macro.txt");
 		Scanner sc = new Scanner(myFile);
-		MacroDataStructs obj = new MacroDataStructs();
+		MacroDataStructsPass1 obj = new MacroDataStructsPass1();
 		ArrayList<String> question = new ArrayList<String>();
+		ArrayList<String> calls = new ArrayList<String>();
 		while(sc.hasNext())
 			question.add(sc.next());
+		int j=1;
 		for(int i=0;i<question.size();i++)
 		{
 			if(question.get(i).equalsIgnoreCase("macro"))
@@ -159,7 +161,25 @@ public class Assignment3
 				}
 				obj.processStart(tokens);
 			}
+			if(question.get(i).equalsIgnoreCase("call"))
+			{
+				boolean flag = true;
+				String line = Integer.toString(j)+". ";
+				j++;
+				while(flag)
+				{
+					i++;
+					line = line + question.get(i) + " ";
+					if(question.get(i).equalsIgnoreCase(";"))
+						flag = false;
+				}
+				calls.add(line);
+			}
 		}
+		FileWriter writeCalls = new FileWriter("Calls.txt");
+		for(int i=0;i<calls.size();i++)
+			writeCalls.write(calls.get(i)+"\n");
+		writeCalls.close();
 		try
 		{
 			obj.writeInFile();
