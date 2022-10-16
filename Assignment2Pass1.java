@@ -75,7 +75,7 @@ class MacroDataStructsPass1
 				}
 				if(Token.get(j).charAt(0) == '&')
 				{
-					String pnToken = "(P, " + (pntab.indexOf(Token.get(j))+1) + ")";
+					String pnToken = "(P," + (pntab.indexOf(Token.get(j))+1) + ")";
 					line = line + pnToken + " ";
 					j++;
 				}
@@ -127,7 +127,7 @@ class MacroDataStructsPass1
 	}
 }
 
-public class Assignment3 
+public class Assignment2Pass1 
 {
 	void printArrayList(ArrayList<NodeKPDTAB> arr)
 	{
